@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Today</title>
+<link rel="manifest" href="manifest.json">
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js");
+  }
+</script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <div class="muted">Today</div>
+        <div class="title">专注</div>
+      </div>
+      <button class="ghost" id="resetBtn" title="清空今日">清空</button>
+    </header>
+
+    <section class="card hero">
+      <div class="muted">今日专注</div>
+      <div class="big" id="totalBig">0</div>
+      <div class="muted" id="totalUnit">分钟</div>
+
+      <div class="row gap">
+        <button class="primary" id="startBtn">开始</button>
+        <button class="secondary" id="customBtn">自定义</button>
+      </div>
+
+      <div class="chips" id="chips"></div>
+      <div class="hint">提示：开始会用“上次选择”的时长</div>
+    </section>
+
+    <section class="card">
+      <div class="row space">
+        <div>
+          <div class="muted">上次选择</div>
+          <div class="value" id="lastPick">25 分钟</div>
+        </div>
+        <div class="pill" id="todayDate"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row space">
+        <div class="muted">本地存储</div>
+        <div class="muted">无需登录 / 不联网也能用</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    const PRESETS = [5, 10, 15, 20, 25, 30, 45, 60];
+
+    function render() {
+      const totals = getJSON("focus_todayTotals", {});
+      const key = todayKey();
+      const minutes = Number(totals[key] ?? 0);
+
+      document.getElementById("totalBig").innerText = minutes.toString();
+      document.getElementById("todayDate").innerText = key;
+
+      const last = getLastDurationMin();
+      document.getElementById("lastPick").innerText = `${last} 分钟`;
+
+      const chips = document.getElementById("chips");
+      chips.innerHTML = "";
+      for (const m of PRESETS) {
+        const btn = document.createElement("button");
+        btn.className = "chip" + (m === last ? " chip-active" : "");
+        btn.innerText = `${m}m`;
+        btn.onclick = () => {
+          setLastDurationMin(m);
+          render();
+        };
+        chips.appendChild(btn);
+      }
+    }
+
+    document.getElementById("startBtn").onclick = () => {
+      const m = getLastDurationMin();
+      startFocus(m);
+    };
+
+    document.getElementById("customBtn").onclick = () => {
+      const raw = prompt("输入专注分钟数（1-180）", String(getLastDurationMin()));
+      if (raw === null) return;
+      const m = Math.max(1, Math.min(180, Number(raw)));
+      if (!Number.isFinite(m)) return;
+      setLastDurationMin(m);
+      render();
+    };
+
+    document.getElementById("resetBtn").onclick = () => {
+      if (!confirm("清空今天的累计专注吗？")) return;
+      const totals = getJSON("focus_todayTotals", {});
+      totals[todayKey()] = 0;
+      setJSON("focus_todayTotals", totals);
+      render();
+    };
+
+    render();
+  </script>
+</body>
+</html>

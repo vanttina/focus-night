@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Focus</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <button class="ghost" id="backBtn">← Today</button>
+      <div class="center">
+        <div class="muted">Focus</div>
+        <div class="value" id="focusMeta">25 分钟</div>
+      </div>
+      <div style="width:64px"></div>
+    </header>
+
+    <section class="card hero">
+      <div class="timer" id="time">00:00</div>
+
+      <div class="progress">
+        <div class="bar" id="bar"></div>
+      </div>
+
+      <div class="row gap">
+        <button class="secondary" id="pauseBtn">暂停</button>
+        <button class="danger" id="endBtn">结束</button>
+      </div>
+
+      <div class="hint" id="stateHint">专注中…</div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    let session = getJSON("focus_currentSession", null);
+    if (!session) location.href = "today.html";
+
+    // 允许从旧 session 升级字段
+    session = normalizeSession(session);
+    setJSON("focus_currentSession", session);
+
+    const totalMs = session.durationMin * 60 * 1000;
+
+    function updateMeta() {
+      document.getElementById("focusMeta").innerText = `${session.durationMin} 分钟`;
+    }
+
+    function formatRemain(ms) {
+      const s = Math.max(0, Math.floor(ms / 1000));
+      const mm = Math.floor(s / 60);
+      const ss = s % 60;
+      return `${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
+    }
+
+    function tick() {
+      session = getJSON("focus_currentSession", session);
+      session = normalizeSession(session);
+
+      const now = Date.now();
+      const endAt = session.startAt + totalMs + session.pausedTotalMs;
+
+      const remain = endAt - now;
+
+      const elapsed = Math.min(totalMs, Math.max(0, totalMs - remain));
+      const pct = Math.max(0, Math.min(1, elapsed / totalMs));
+
+      document.getElementById("time").innerText = formatRemain(remain);
+      document.getElementById("bar").style.width = `${Math.floor(pct * 100)}%`;
+
+      const pauseBtn = document.getElementById("pauseBtn");
+      if (session.status === "paused") {
+        pauseBtn.innerText = "继续";
+        document.getElementById("stateHint").innerText = "已暂停";
+      } else {
+        pauseBtn.innerText = "暂停";
+        document.getElementById("stateHint").innerText = "专注中…";
+      }
+
+      if (remain <= 0) {
+        finishSession(session); // 自动累计并回 Today
+      }
+    }
+
+    document.getElementById("pauseBtn").onclick = () => {
+      session = getJSON("focus_currentSession", session);
+      session = normalizeSession(session);
+
+      if (session.status === "running") {
+        session.status = "paused";
+        session.pausedAt = Date.now();
+      } else if (session.status === "paused") {
+        const now = Date.now();
+        session.status = "running";
+        session.pausedTotalMs += Math.max(0, now - session.pausedAt);
+        session.pausedAt = null;
+      }
+      setJSON("focus_currentSession", session);
+      tick();
+    };
+
+    document.getElementById("endBtn").onclick = () => {
+      if (!confirm("提前结束并计入今日累计吗？")) return;
+      finishSession(session);
+    };
+
+    document.getElementById("backBtn").onclick = () => {
+      location.href = "today.html";
+    };
+
+    updateMeta();
+    tick();
+    setInterval(tick, 250);
+  </script>
+</body>
+</html>
