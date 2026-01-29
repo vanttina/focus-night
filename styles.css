@@ -1,3 +1,48 @@
+.recent-box{
+  margin-top: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.recent-title{
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.recent-empty{
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.recent-list{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.recent-item{
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+}
+
+.recent-meta{
+  font-size: 12px;
+  opacity: 0.75;
+  margin-bottom: 6px;
+}
+
+.recent-note{
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
 :root{
   --bg:#070914;
   --card: rgba(18, 22, 48, .55);
@@ -216,4 +261,100 @@ button:active{ transform: translateY(1px); }
   width:0%;
   background: linear-gradient(90deg, rgba(255,255,255,.92) 0%, rgba(168,196,255,.95) 55%, rgba(201,140,255,.85) 100%);
   box-shadow: 0 0 18px rgba(168,196,255,.22);
+}
+.hidden { display: none !important; }
+
+.category-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 10px 0 6px;
+}
+
+.chip {
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.06);
+  color: inherit;
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.chip.active {
+  background: rgba(255,255,255,0.16);
+  border-color: rgba(255,255,255,0.35);
+}
+
+.category-hint {
+  margin: 0 0 10px;
+  opacity: 0.8;
+  font-size: 14px;
+}
+
+/* modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(3px);
+  z-index: 50;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 60;
+  padding: 18px;
+}
+
+.modal-card {
+  width: min(680px, 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(10, 12, 25, 0.92);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  padding: 16px;
+}
+
+.modal-meta {
+  display: flex;
+  gap: 14px;
+  opacity: 0.8;
+  font-size: 13px;
+  margin: 6px 0 10px;
+}
+
+#reviewNote {
+  width: 100%;
+  resize: vertical;
+  min-height: 120px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  color: inherit;
+  padding: 12px;
+  outline: none;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.btn {
+  border-radius: 14px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.08);
+  color: inherit;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: rgba(255,255,255,0.16);
+  border-color: rgba(255,255,255,0.32);
 }
