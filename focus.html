@@ -80,8 +80,9 @@
       }
 
       if (remain <= 0) {
-        finishSession(session); // 自动累计并回 Today
-      }
+  window.openReviewModal?.(); // ✅ 结束后弹出记事弹窗
+  return; // ✅ 防止 tick 继续跑导致重复弹窗
+}
     }
 
     document.getElementById("pauseBtn").onclick = () => {
@@ -102,9 +103,10 @@
     };
 
     document.getElementById("endBtn").onclick = () => {
-      if (!confirm("提前结束并计入今日累计吗？")) return;
-      finishSession(session);
-    };
+  if (!confirm("提前结束并计入今日累计吗？")) return;
+  window.openReviewModal?.(); // ✅ 提前结束也先写总结
+};
+
 
     document.getElementById("backBtn").onclick = () => {
       location.href = "today.html";
@@ -114,5 +116,24 @@
     tick();
     setInterval(tick, 250);
   </script>
+<div class="modal-backdrop hidden" id="reviewBackdrop"></div>
+
+<div class="modal hidden" id="reviewModal" role="dialog" aria-modal="true" aria-labelledby="reviewTitle">
+  <div class="modal-card">
+    <h2 id="reviewTitle">这段专注你主要做了什么？</h2>
+    <div class="modal-meta">
+      <span id="reviewCategory"></span>
+      <span id="reviewDuration"></span>
+    </div>
+
+    <textarea id="reviewNote" rows="7" placeholder="随便写一句也可以，比如：改了课件、写了两段脚本、整理了素材…"></textarea>
+
+    <div class="modal-actions">
+      <button class="btn secondary" id="skipReviewBtn">跳过</button>
+      <button class="btn primary" id="saveReviewBtn">保存</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
