@@ -1,6 +1,6 @@
 self.addEventListener("install", (e) => {
   e.waitUntil(
-    caches.open("focus-night-v1").then((cache) =>
+    caches.open("focus-night-v2").then((cache) =>
       cache.addAll([
         "./",
         "./today.html",
