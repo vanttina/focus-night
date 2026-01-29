@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Today</title>
-  <link rel="manifest" href="manifest.json">
+<link rel="manifest" href="manifest.json">
 <script>
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js");
@@ -26,7 +26,14 @@
       <div class="muted">今日专注</div>
       <div class="big" id="totalBig">0</div>
       <div class="muted" id="totalUnit">分钟</div>
-
+<div class="category-row" id="categoryRow">
+  <button class="chip" data-cat="工作">工作</button>
+  <button class="chip" data-cat="学习">学习</button>
+  <button class="chip" data-cat="创作">创作</button>
+  <button class="chip" data-cat="阅读">阅读</button>
+  <button class="chip" data-cat="其他">其他</button>
+</div>
+<p class="category-hint">本次方向：<span id="currentCategoryText">未选择</span></p>
       <div class="row gap">
         <button class="primary" id="startBtn">开始</button>
         <button class="secondary" id="customBtn">自定义</button>
@@ -48,8 +55,10 @@
       <div class="divider"></div>
 
       <div class="row space">
-        <div class="muted">本地存储</div>
-        <div class="muted">无需登录 / 不联网也能用</div>
+        <div class="recent-box" id="recentBox">
+  <div class="recent-title">最近 3 条回顾</div>
+  <div class="recent-empty hidden" id="recentEmpty">还没有记录。完成一次专注后，这里会出现回顾。</div>
+  <ul class="recent-list" id="recentList"></ul>
       </div>
     </section>
   </main>
@@ -109,4 +118,3 @@
   </script>
 </body>
 </html>
-
